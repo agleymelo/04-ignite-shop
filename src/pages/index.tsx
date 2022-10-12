@@ -53,7 +53,10 @@ export const getStaticProps: GetStaticProps = async () => {
       id: product.id,
       name: product.name,
       image_url: product.images[0],
-      price: price.unit_amount / 100,
+      price: new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(price.unit_amount / 100),
     };
   });
 
@@ -61,5 +64,6 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       products,
     },
+    revalidate: 60 * 60 * 24, // 24 hours
   };
 };
