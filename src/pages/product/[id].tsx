@@ -16,11 +16,16 @@ type ProductProps = {
     image_url: string;
     price: string;
     description: string;
+    defaultPriceId: string;
   };
 };
 
 export default function Product({ product }: ProductProps) {
   const { isFallback } = useRouter();
+
+  function handleBuyProduct() {
+    console.log(product.defaultPriceId);
+  }
 
   if (isFallback) {
     return <p>Loading...</p>;
@@ -38,7 +43,7 @@ export default function Product({ product }: ProductProps) {
 
         <p>{product.description}</p>
 
-        <button>BUY NOW</button>
+        <button onClick={handleBuyProduct}>BUY NOW</button>
       </ProductDetails>
     </ProductContainer>
   );
@@ -79,6 +84,7 @@ export const getStaticProps: GetStaticProps<any, { id: string }> = async ({
           currency: "USD",
         }).format(price.unit_amount / 100),
         description: product.description,
+        defaultPriceId: price.id,
       },
     },
     revalidate: 64 * 64 * 1, // 1 hour
