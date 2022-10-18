@@ -6,6 +6,10 @@ export const HomeContainer = styled("main", {
   maxWidth: "calc(100vw - ((100vw - 1180px) / 2))",
   marginLeft: "auto",
   minHeight: 656,
+
+  a: {
+    textDecoration: "none",
+  },
 });
 
 export const Product = styled("div", {
@@ -38,6 +42,8 @@ export const Product = styled("div", {
     justifyContent: "space-between",
 
     backgroundColor: "rgba(0, 0, 0, 0.6)",
+
+    color: "$gray100",
 
     transform: "translateY(110%)",
     opacity: 0,

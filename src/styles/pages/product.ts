@@ -25,6 +25,8 @@ export const ImageContainer = styled("div", {
   img: {
     objectFit: "cover",
   },
+
+  textDecoration: "none",
 });
 
 export const ProductDetails = styled("div", {
