@@ -13,42 +13,39 @@ import {
   ProductDetails,
 } from "../../styles/pages/product";
 import Head from "next/head";
+import { useShoppingCart } from "use-shopping-cart";
 
 type ProductProps = {
   product: {
     id: string;
     name: string;
-    image_url: string;
+    imageUrl: string;
     price: string;
     description: string;
-    defaultPriceId: string;
+    priceId: string;
+    priceNotFormatted: number;
   };
 };
 
 export default function Product({ product }: ProductProps) {
-  const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] =
-    useState(false);
-
   const { isFallback } = useRouter();
 
-  async function handleBuyProduct() {
-    setIsCreatingCheckoutSession(true);
+  const { addItem, cartDetails } = useShoppingCart();
 
-    try {
-      const response = await axios.post("/api/checkout", {
-        priceId: product.defaultPriceId,
-      });
+  const isItemAlreadyExistsInCart = !!cartDetails[product.id];
 
-      const { checkoutUrl } = response.data;
+  function addToCart() {
+    if (isItemAlreadyExistsInCart) return;
 
-      window.location.href = checkoutUrl;
-    } catch (e) {
-      // Conectar com uma ferramenta de observabilidade (Datalog / Sentry)
-
-      setIsCreatingCheckoutSession(false);
-
-      alert("Falha ao redirecionar ao Checkout");
-    }
+    addItem({
+      currency: "USD",
+      id: product.id,
+      name: product.name,
+      price: product.priceNotFormatted,
+      price_id: product.priceId,
+      image: product.imageUrl,
+      description: product.description,
+    });
   }
 
   if (isFallback) {
@@ -63,7 +60,7 @@ export default function Product({ product }: ProductProps) {
 
       <ProductContainer>
         <ImageContainer>
-          <Image src={product.image_url} width={520} height={480} alt="" />
+          <Image src={product.imageUrl} width={520} height={480} alt="" />
         </ImageContainer>
 
         <ProductDetails>
@@ -72,11 +69,8 @@ export default function Product({ product }: ProductProps) {
 
           <p>{product.description}</p>
 
-          <button
-            disabled={isCreatingCheckoutSession}
-            onClick={handleBuyProduct}
-          >
-            BUY NOW
+          <button disabled={isItemAlreadyExistsInCart} onClick={addToCart}>
+            {isItemAlreadyExistsInCart ? "ITEM ALREADY IN CART" : "ADD TO CART"}
           </button>
         </ProductDetails>
       </ProductContainer>
@@ -113,13 +107,14 @@ export const getStaticProps: GetStaticProps<any, { id: string }> = async ({
       product: {
         id: product.id,
         name: product.name,
-        image_url: product.images[0],
+        imageUrl: product.images[0] ?? "",
         price: new Intl.NumberFormat("en-US", {
           style: "currency",
           currency: "USD",
         }).format(price.unit_amount / 100),
+        priceId: price.id,
         description: product.description,
-        defaultPriceId: price.id,
+        priceNotFormatted: price.unit_amount,
       },
     },
     revalidate: 64 * 64 * 1, // 1 hour

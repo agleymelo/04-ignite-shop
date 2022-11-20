@@ -59,4 +59,33 @@ export const ImageContainer = styled("div", {
   img: {
     objectFit: "cover",
   },
+
+  variants: {
+    multiple: {
+      true: {
+        width: 140,
+        maxWidth: 140,
+        height: 140,
+        borderRadius: 9999999,
+        filter:
+          "drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1))",
+      },
+    },
+  },
+});
+
+export const SuccessProductsContainer = styled("div", {
+  variants: {
+    isMultiple: {
+      true: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        marginLeft: "5%",
+        "& > div": {
+          marginLeft: "-10%",
+        },
+      },
+    },
+  },
 });
